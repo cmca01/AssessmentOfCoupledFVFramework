@@ -1,0 +1,129 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      beamProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+beamModel coupledTotalLagNewtonRaphsonBeam;
+
+nBeams 1;
+R R [0 1 0 0 0 0 0] 4.0E-03; 
+L L [0 1 0 0 0 0 0] 2.6717; //2.7397;
+nSegments 60; 
+
+
+"coupledTotalLagNewtonRaphsonBeamCoeffs"
+{
+  E E [1 -1 -2 0 0 0 0] 2.7E09; //nylon //4.0E06;
+  G G [1 -1 -2 0 0 0 0]  9.7E08;//1.439E06;
+  rho rho [1 -3 0 0 0 0 0] 1140;  //nylon 
+
+    rhoFluid rhoFluid [1 -3 0 0 0 0 0] 1; //air
+
+    groundContactActive false;
+    groundZ -0.5;
+    gStiffness 1E04;
+    gDamping 1.0;
+    nSegments 60;
+    kNormal 1E03;
+    cNormal 1.0;
+    seabedFrictionActive false;
+    muFriction 0.01;
+    kTangential 1E03;
+    startPatchName left;
+    endPatchName right;
+
+    //- convergence check paramters----------------                                                                                                                        
+    nCorrectors 200;
+    residualTol 1e-10;
+    solutionTol 1e-10;
+    absoluteTol 1e-10;
+    convergenceTol 1e-08;
+    //-------------------------  
+
+    debug no;
+
+    updatedLagrangian no;
+
+    //   ibrahimovicCase true;
+
+    objectiveInterpolation false;
+
+    steadyState false;
+
+    // Newmark-beta integration scheme
+    newmark false;
+
+    // Flag to activate drag contribution
+    // steadyState flag should also be false along with this flag
+    // else drag forces will be zero
+    dragActive true;
+    couplingActive false;
+
+    // Coefficient of drag in normal and tangential directions
+    // Default value if not specified is 1.0 for both
+    Cdn 1.6;
+    Cdt 0.05;
+    CMn 1.0;
+    CMt 0.0;
+}
+
+/*
+beamModel coupledTotalLagNewtonRaphsonBeam;
+
+/*
+nBeams 1;
+R R [0 1 0 0 0 0 0] 4.0E-03; //5.70732;
+L L [0 1 0 0 0 0 0] 2.6717;
+nSegments 60;
+beams
+(
+    beamone
+    {
+        crossSectionModel    circle;
+
+        circleCrossSectionModelDict
+        {
+            radius    4.0E-03;
+        }
+        length    2.6717;
+        nSegments    60;
+    }
+ );
+*/
+/*
+"coupledTotalLagNewtonRaphsonBeamCoeffs"
+{
+    E E [1 -1 -2 0 0 0 0] 2.7E09;//20e6;
+    G G [1 -1 -2 0 0 0 0] 9.7E08;//971223021;//10e6; // nu=0
+    rho rho [1 -3 0 0 0 0 0] 1140;  //nylon
+    
+    startPatchName left;
+    endPatchName right;
+
+    nCorrectors 2000;
+
+    // Solution and residual tolerances 
+    solutionTol 1e-10;
+    residualTol 1e-8;
+
+    debug yes;
+}
+*/
+
+
+
+
+// ************************************************************************* //

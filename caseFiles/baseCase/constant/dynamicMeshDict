@@ -1,0 +1,125 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1806                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+dynamicFvMesh        dynamicMotionSolverFvMesh;
+motionSolverLibs    ("libfiniteVolumeBeamMooring");
+
+motionSolver        sixDoFRigidBodyMotionFvBeam;
+
+
+
+
+sixDoFRigidBodyMotionFvBeamCoeffs
+{
+    patches         (floatingObject); // Specify your floating object patch here
+    mass            7.12; // Define the mass of the floating object
+    centreOfMass    (5.75 2.375 0.617);// Centre of gravity of the FPV
+    orientation     (1 0 0 0 1 0 0 0 1); // Initial orientation matrix
+    innerDistance 0;
+    outerDistance 0.5; //0.6;//0.45; //0.8;
+
+//- modified mesh morphing parameters
+    //-----------------------------------
+    containOuterDistance   0;
+    xDistance    1.0;
+    yDistance    1.2;
+    //-----------------------------------
+    
+    // Set other physical properties as needed
+    //    momentOfInertia (0.3909 0.3909 0.5428); // assuming uniform density
+    momentOfInertia (0.5 0.5 0.65); // matching FPV decay tests as best as possible
+
+    
+    solver
+    {
+              type FvBeamNewmark;
+      //      type     Newmark;
+    }
+
+
+    accelerationRelaxation 0.7;
+    //accelerationDamping    0.2;  
+
+    
+    
+    constraints
+      {
+	 
+      }
+    
+        restraints
+        {
+                beamone
+        {
+                sixDoFRigidBodyMotionFvBeamRestraint finiteVolumeBeam;
+
+                attachmentPatch right;
+
+                anchorPatch left;
+
+                beamRegion      "beamone";
+
+                refAttachmentPt   (5.37785 2.375 0.85);     // (5.75 2.375 0.8);
+        }
+                beamtwo
+        {
+                sixDoFRigidBodyMotionFvBeamRestraint finiteVolumeBeam;
+
+		attachmentPatch left;
+
+                anchorPatch     right;
+
+                beamRegion      "beamtwo";
+
+                refAttachmentPt   (5.936073 2.375 0.85); // (5.75 2.375 0.8);
+        }
+}
+}
+
+
+
+/*
+addedMassModel      pisoAddedMass;
+
+solvers
+{
+    box
+    {
+        motionSolverLibs    ("libfloaterMotion.so");
+
+        motionSolver        floaterMotion;
+
+        floaterMotionCoeffs
+        {
+            patches         (floatingObject);
+            innerDistance   10;
+            outerDistance   60;
+            MaddUpdateFreq  1;
+            linDirs         (1 1 1);
+            rotDirs         (1 1 1);
+
+            #include "floaterMassAndInertia"
+
+            restraints
+            {
+	      //	      #include "mooringDict"
+            }
+        }
+    }
+}
+*/
+// ************************************************************************* //
